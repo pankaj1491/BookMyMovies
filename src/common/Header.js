@@ -8,7 +8,6 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 const Header = (props) => {
     const [showModal, setShowModal] = useState(false);
-    // const [Registered, setRegistered] = useState(false);
     // const [LoggedIn, setLoggedIn] = useState(false);
     const [RegMsg, setRegMsg] = useState('');
     const [LogInMsg, setLogInMsg] = useState('');
@@ -38,7 +37,7 @@ const Header = (props) => {
 
     }
     const { first_name, email_address, last_name, mobile_number, password } = RegistrationForm;
-    const { Email,Password } = LogInForm;
+    const { Email, Password } = LogInForm;
     async function addUser(RegForm) {
 
         try {
@@ -54,9 +53,9 @@ const Header = (props) => {
             const result = await rawResponse.json();
             const regMmsg = document.querySelector(".RegitrationSuccess");
             if (rawResponse.ok) {
-             regMmsg.style.display = 'flex';
-             regMmsg.style.color = 'grey';
-             setRegMsg('Registration Successful. Please Login!');
+                regMmsg.style.display = 'flex';
+                regMmsg.style.color = 'grey';
+                setRegMsg('Registration Successful. Please Login!');
 
             } else {
                 regMmsg.style.display = 'flex';
@@ -84,6 +83,7 @@ const Header = (props) => {
     //log in API call
     async function login(User, auth) {
         const param = window.btoa(`${User}:${auth}`);
+        console.log(param);
         try {
             const rawResponse = await fetch('http://localhost:8085/api/v1/auth/login', {
                 method: 'POST',
@@ -93,31 +93,68 @@ const Header = (props) => {
                     authorization: `Basic ${param}`
                 }
             });
-    
+
             const result = await rawResponse.json();
             const logInMsg = document.querySelector(".LogInSuccess");
-            if(rawResponse.ok) {
+            const loginbutton = document.querySelector(".blogin");
+            const logoutbutton = document.querySelector(".blogout");
+
+            if (rawResponse.ok) {
                 window.sessionStorage.setItem('user-details', JSON.stringify(result));
                 window.sessionStorage.setItem('access-token', rawResponse.headers.get('access-token'));
+                console.log(window.sessionStorage.getItem('access-token'));
                 logInMsg.style.display = 'none';
+                loginbutton.style.display = 'none';
+                logoutbutton.style.float = 'right';
+                logoutbutton.style.display = 'flex';
                 setShowModal(false);
             } else {
                 logInMsg.style.display = 'flex';
                 logInMsg.style.color = 'red';
                 setLogInMsg(result.message);
             }
-        } catch(e) {
+
+        } catch (e) {
             console.log(`Error: ${e.message}`);
         }
     }
     const onLogInSubmitHandler = (e) => {
         e.preventDefault();
 
-        login(Email,Password);
+        login(Email, Password);
         setLogInForm({
             Email: '',
             Password: ''
         });
+
+    }
+    async function logout() {
+        const param = window.sessionStorage.getItem('access-token');
+        try {
+            const rawResponse = await fetch('http://localhost:8085/api/v1/auth/logout', {
+                method: 'POST',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                    authorization: `Bearer ${param}`
+                }
+            });
+            const loginbutton = document.querySelector(".blogin");
+            const logoutbutton = document.querySelector(".blogout");
+            if(rawResponse.ok) {
+                loginbutton.style.display = 'flex';
+                loginbutton.style.float = 'right';
+                logoutbutton.style.display = 'none';
+            } 
+        } catch(e) {
+            console.log(`Error: ${e.message}`);
+        }
+    }
+    const logoutHandler = (e) => {
+        e.preventDefault();
+
+        logout();
+
     }
     const gridstyle = { margin: '3px 3px 3px 3px', border: '1px solid grey', borderRadius: '5px' }
 
@@ -133,9 +170,8 @@ const Header = (props) => {
         <Fragment>
             <div className="header">
                 <SvgIcon className="logo" component={ImportedSVG} type="image/svg+xml" />
-
-
-                <Button className="blogin" variant="contained" onClick={() => { setShowModal(true) }}>login</Button>
+                <Button className="blogin" variant="contained" style={{ float: 'right' }} onClick={() => { setShowModal(true) }}>LOGIN</Button>
+                <Button type='submit' className="blogout" variant="contained" style={{ display: 'none' }} onClick={ logoutHandler }>LOGOUT</Button>
             </div>
             <Modal isOpen={showModal}
                 contentLabel="LogIn"
@@ -164,21 +200,21 @@ const Header = (props) => {
                                 element3.style.display = 'grid'; element4.style.display = 'none';
                             }} >REGISTER</Link>
                         </div>
-                      
-                        <div className="login" style={{ display: 'grid', justifyItems: 'center', marginBottom:'10px' }}>
-                        <ValidatorForm className="subscriber-form" onSubmit={onLogInSubmitHandler}>
-                            {/* <TextField label='Username' placeholder='Enter username' required /> */}
-                            <TextValidator name="Email" variant="standard" id="user" label='Username*' onChange={inputLogInChangedHandler} type="text" value={Email} validators={['required']} errorMessages={['required']}></TextValidator>
-                            {/* <TextField label='Password' placeholder='Enter password' type='password' required /> */}
-                            <TextValidator name="Password" variant="standard" id="pw" label='Password*' onChange={inputLogInChangedHandler} type="password" value={Password} validators={['required']} errorMessages={['required']}></TextValidator>
-                            <br></br>
-                            <div className="LogInSuccess" style={{ display: 'none' }}><br></br><span>{LogInMsg}</span></div>
-                            <Button style={{ width: '25px' }} type='submit' color='primary' variant="contained">LOGIN</Button>
-                        </ValidatorForm>
+
+                        <div className="login" style={{ display: 'grid', justifyItems: 'center', marginBottom: '10px' }}>
+                            <ValidatorForm className="subscriber-form" onSubmit={onLogInSubmitHandler}>
+                                {/* <TextField label='Username' placeholder='Enter username' required /> */}
+                                <TextValidator name="Email" variant="standard" id="user" label='Username*' onChange={inputLogInChangedHandler} type="text" value={Email} validators={['required']} errorMessages={['required']}></TextValidator>
+                                {/* <TextField label='Password' placeholder='Enter password' type='password' required /> */}
+                                <TextValidator name="Password" variant="standard" id="pw" label='Password*' onChange={inputLogInChangedHandler} type="password" value={Password} validators={['required']} errorMessages={['required']}></TextValidator>
+                                <br></br>
+                                <div className="LogInSuccess" style={{ display: 'none' }}><br></br><span>{LogInMsg}</span></div>
+                                <Button style={{ width: '25px' }} type='submit' color='primary' variant="contained">LOGIN</Button>
+                            </ValidatorForm>
                         </div>
 
 
-                        <div className="signup" style={{ display: 'none', justifyContent: 'center', marginBottom:'10px' }}>
+                        <div className="signup" style={{ display: 'none', justifyContent: 'center', marginBottom: '10px' }}>
                             <ValidatorForm className="subscriber-form" onSubmit={onRegSubmitHandler}>
                                 {/* <TextField name="first_name" label='First Name' onChange={inputChangedHandler} required /> */}
                                 <TextValidator name="first_name" variant="standard" id="fname" label='First Name*' onChange={inputRegChangedHandler} type="text" value={first_name} validators={['required']} errorMessages={['required']}></TextValidator>
@@ -192,7 +228,7 @@ const Header = (props) => {
                                 <TextValidator name="mobile_number" variant="standard" id="mob" label='Contact No*' onChange={inputRegChangedHandler} type="number" value={mobile_number} validators={['required']} errorMessages={['required']}></TextValidator>
                                 <br></br>
                                 <div className="RegitrationSuccess" style={{ display: 'none' }}><br></br><span>{RegMsg}</span></div>
-                                <Button style={{marginLeft:'35px'}} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
+                                <Button style={{ marginLeft: '35px' }} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
                             </ValidatorForm>
                         </div>
 

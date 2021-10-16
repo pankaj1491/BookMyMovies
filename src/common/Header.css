@@ -8,10 +8,7 @@
     100% {  transform: rotate(359deg); }
 }
 .logo{
+    padding: 5px;
     background-color: #ff7f7f;
-    height: 35px;
     animation: spin 8s linear infinite;
-}
-.blogin{
-    float: right;
 }
