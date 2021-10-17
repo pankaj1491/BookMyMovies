@@ -1,8 +1,8 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import './Header.css';
 import './modal.css';
 import { ReactComponent as ImportedSVG } from "../assets/logo.svg";
-import { SvgIcon, Button, Grid, Link, GridList, GridListTile, GridListTileBar } from '@material-ui/core';
+import { SvgIcon, Button, Grid, Link} from '@material-ui/core';
 import Modal from 'react-modal';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
@@ -10,7 +10,6 @@ const Header = (props) => {
     const [showModal, setShowModal] = useState(false);
     const [RegMsg, setRegMsg] = useState('');
     const [LogInMsg, setLogInMsg] = useState('');
-    const [movies, setMovies] = useState([]);
     const [RegistrationForm, setRegistrationForm] = useState({
         first_name: '',
         email_address: '',
@@ -156,27 +155,7 @@ const Header = (props) => {
 
     }
 
-    async function loadMovieData() {
-
-        try {
-            const rawResponse = await fetch('http://localhost:8085/api/v1/movies?page=1&limit=10', {
-                method: 'GET',
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json;charset=UTF-8"
-                }
-            });
-
-            const result = await rawResponse.json();
-            setMovies(result.movies);
-
-        } catch (e) {
-            console.log(`Error: ${e.message}`);
-        }
-    }
-    useEffect(() => {
-        loadMovieData();
-    }, [])
+ 
     const gridstyle = { margin: '3px 3px 3px 3px', border: '1px solid grey', borderRadius: '5px' }
 
     const linkStyle = { color: 'grey', padding: '20px', textDecoration: 'underline red', cursor: 'pointer', textUnderlinePosition: 'under' }
@@ -189,18 +168,6 @@ const Header = (props) => {
                 <SvgIcon className="logo" component={ImportedSVG} type="image/svg+xml" />
                 <Button className="blogin" variant="contained" style={{ float: 'right' }} onClick={() => { setShowModal(true) }}>LOGIN</Button>
                 <Button type='submit' className="blogout" variant="contained" style={{ display: 'none' }} onClick={logoutHandler}>LOGOUT</Button>
-            </div>
-            <div className="upcomingMoviesHeader">Upcoming Movies</div>
-            <div className="upcomingMovies">
-                <GridList cellHeight={250} cols={6} style={{ flexWrap: 'nowrap' }}>
-                    {movies.map((movie) => (
-                        <GridListTile key={movie.id}>
-                            <img src={movie.poster_url} alt={movie.title} />
-                            <GridListTileBar title={movie.title} />
-                        </GridListTile>
-                    )
-                    )}
-                </GridList>
             </div>
             <Modal isOpen={showModal}
                 contentLabel="LogIn"

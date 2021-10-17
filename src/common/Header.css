@@ -12,10 +12,4 @@
     background-color: #ff7f7f;
     animation: spin 8s linear infinite;
 }
-.upcomingMoviesHeader{
-    background-color: #ff9999;
-    padding: 8px 8px 8px 8px;
-    text-align: center;
-    font-size: 1rem;
-}
 
