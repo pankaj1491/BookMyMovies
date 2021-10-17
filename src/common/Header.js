@@ -1,16 +1,16 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import './Header.css';
 import './modal.css';
 import { ReactComponent as ImportedSVG } from "../assets/logo.svg";
-import { SvgIcon, Button, Grid, TextField, Link } from '@material-ui/core';
+import { SvgIcon, Button, Grid, Link, GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import Modal from 'react-modal';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 const Header = (props) => {
     const [showModal, setShowModal] = useState(false);
-    // const [LoggedIn, setLoggedIn] = useState(false);
     const [RegMsg, setRegMsg] = useState('');
     const [LogInMsg, setLogInMsg] = useState('');
+    const [movies, setMovies] = useState([]);
     const [RegistrationForm, setRegistrationForm] = useState({
         first_name: '',
         email_address: '',
@@ -36,8 +36,7 @@ const Header = (props) => {
         setLogInForm({ ...state })
 
     }
-    const { first_name, email_address, last_name, mobile_number, password } = RegistrationForm;
-    const { Email, Password } = LogInForm;
+
     async function addUser(RegForm) {
 
         try {
@@ -141,12 +140,12 @@ const Header = (props) => {
             });
             const loginbutton = document.querySelector(".blogin");
             const logoutbutton = document.querySelector(".blogout");
-            if(rawResponse.ok) {
+            if (rawResponse.ok) {
                 loginbutton.style.display = 'flex';
                 loginbutton.style.float = 'right';
                 logoutbutton.style.display = 'none';
-            } 
-        } catch(e) {
+            }
+        } catch (e) {
             console.log(`Error: ${e.message}`);
         }
     }
@@ -156,22 +155,52 @@ const Header = (props) => {
         logout();
 
     }
+
+    async function loadMovieData() {
+
+        try {
+            const rawResponse = await fetch('http://localhost:8085/api/v1/movies?page=1&limit=10', {
+                method: 'GET',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            });
+
+            const result = await rawResponse.json();
+            setMovies(result.movies);
+
+        } catch (e) {
+            console.log(`Error: ${e.message}`);
+        }
+    }
+    useEffect(() => {
+        loadMovieData();
+    }, [])
     const gridstyle = { margin: '3px 3px 3px 3px', border: '1px solid grey', borderRadius: '5px' }
 
-    const linkStyle = {
-        color: 'grey',
-        padding: '20px',
-        textDecoration: 'underline red',
-        cursor: 'pointer',
-        textUnderlinePosition: 'under'
-    }
+    const linkStyle = { color: 'grey', padding: '20px', textDecoration: 'underline red', cursor: 'pointer', textUnderlinePosition: 'under' }
+    const { first_name, email_address, last_name, mobile_number, password } = RegistrationForm;
+    const { Email, Password } = LogInForm;
 
     return (
         <Fragment>
             <div className="header">
                 <SvgIcon className="logo" component={ImportedSVG} type="image/svg+xml" />
                 <Button className="blogin" variant="contained" style={{ float: 'right' }} onClick={() => { setShowModal(true) }}>LOGIN</Button>
-                <Button type='submit' className="blogout" variant="contained" style={{ display: 'none' }} onClick={ logoutHandler }>LOGOUT</Button>
+                <Button type='submit' className="blogout" variant="contained" style={{ display: 'none' }} onClick={logoutHandler}>LOGOUT</Button>
+            </div>
+            <div className="upcomingMoviesHeader">Upcoming Movies</div>
+            <div className="upcomingMovies">
+                <GridList cellHeight={250} cols={6} style={{ flexWrap: 'nowrap' }}>
+                    {movies.map((movie) => (
+                        <GridListTile key={movie.id}>
+                            <img src={movie.poster_url} alt={movie.title} />
+                            <GridListTileBar title={movie.title} />
+                        </GridListTile>
+                    )
+                    )}
+                </GridList>
             </div>
             <Modal isOpen={showModal}
                 contentLabel="LogIn"
@@ -181,13 +210,7 @@ const Header = (props) => {
                 className='Modal'
                 overlayClassName='Overlay'
             >
-
-
-
-
-                <Grid className="lofinform" style={gridstyle}>
-
-
+                <Grid className="loginform" style={gridstyle}>
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
@@ -231,14 +254,8 @@ const Header = (props) => {
                                 <Button style={{ marginLeft: '35px' }} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
                             </ValidatorForm>
                         </div>
-
                     </div>
-
-
                 </Grid>
-
-
-
             </Modal>
         </Fragment>
 
