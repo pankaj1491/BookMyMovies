@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import './Header.css';
 import './modal.css';
 import { ReactComponent as ImportedSVG } from "../assets/logo.svg";
-import { SvgIcon, Button, Grid, Link} from '@material-ui/core';
+import { SvgIcon, Button, Grid, Link, Card} from '@material-ui/core';
 import Modal from 'react-modal';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
@@ -165,7 +165,7 @@ const Header = (props) => {
     return (
         <Fragment>
             <div className="header">
-                <SvgIcon className="logo" component={ImportedSVG} type="image/svg+xml" />
+                <SvgIcon className="logo" children component={ImportedSVG} type="image/svg+xml" />
                 <Button className="blogin" variant="contained" style={{ float: 'right' }} onClick={() => { setShowModal(true) }}>LOGIN</Button>
                 <Button type='submit' className="blogout" variant="contained" style={{ display: 'none' }} onClick={logoutHandler}>LOGOUT</Button>
             </div>
@@ -176,9 +176,11 @@ const Header = (props) => {
                 onRequestClose={() => { setShowModal(false) }}
                 className='Modal'
                 overlayClassName='Overlay'
+                
             >
                 <Grid className="loginform" style={gridstyle}>
                     <div>
+                        <Card elevation={20}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
                             <Link style={linkStyle} onClick={() => {
@@ -221,6 +223,7 @@ const Header = (props) => {
                                 <Button style={{ marginLeft: '35px' }} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
                             </ValidatorForm>
                         </div>
+                        </Card>
                     </div>
                 </Grid>
             </Modal>
