@@ -14,6 +14,67 @@ const Home = (props) => {
   const [Relmovies, setRelMovies] = useState([]);
   const [Genres, setGenres] = useState([]);
   const [Artists, setArtists] = useState([]);
+  const [filterForm, setfilterForm] = useState({
+    fMovie: '',
+    fGenres: [],
+    fArtists: [],
+    ReleaseS: { sDate:new Date()} ,
+    ReleaseE: { eDate:new Date()} 
+
+});
+const inputFilterChangedHandler = (e) => {
+  const state = filterForm;
+  state[e.target.name] = e.target.value;
+  setfilterForm({ ...state })
+
+}
+function isEmpty(value){
+  return (value == null || value.length === 0);
+}
+function filterMovies(movie,genres,artists,releases,releasee) {
+  console.log(artists);
+  if( !isEmpty(movie) && isEmpty(genres) && isEmpty(artists) ){
+    
+  setRelMovies(movies.filter((item)=> (item.title === movie )));
+  }
+  
+  else if(!isEmpty(movie) && !isEmpty(artists)){
+    let fname=[];
+    let index=0;
+    let flag='';
+    let sName=[];
+    artists.forEach((item) => {let arr = item.split(' ');fname.push(arr[0]);});
+    movies.forEach((item,i) => {if(item.title === movie ){
+           index=i;
+    }})
+    // console.log(fname,index,movies[index]);
+    if(index !== 0){
+      movies[index].artists.forEach((item)=> sName.push(item.first_name));
+    }
+    
+    sName.forEach((item) =>{if( fname.includes(item)){flag='YES'}});
+    console.log(fname,index,movies[index],sName,flag);
+    if(flag === 'YES' && index !== 0){
+      let newArr = [];
+      newArr.push(movies[index]);
+     setRelMovies(newArr);
+     console.log(Relmovies);
+    }else{
+      setRelMovies(movies.filter((item) => item.status === 'RELEASED'));
+    }
+    
+  }
+  else{
+      
+      setRelMovies(movies.filter((item) => item.status === 'RELEASED'));
+  }
+  }
+  
+const relMovieHandler = () => {
+
+  filterMovies(fMovie,fGenres,fArtists,ReleaseS,ReleaseE);
+
+}
   const theme = useTheme();
   const cardtheme = createTheme({
 
@@ -38,7 +99,9 @@ const Home = (props) => {
       MuiButton: {
         styleOverrides: {
           root: {
-            marginTop: 25
+            marginTop: 25,
+            color: 'primary',
+            backgroundColor: 'primary'
           }
         }
       },
@@ -49,14 +112,7 @@ const Home = (props) => {
             paddingTop: 0
           }
         }
-      },
-      // MuiAutocomplete:{
-      //   styleOverrides:{
-      //   root:{
-      //    marginTop:100 
-      //   }
-      // }
-      // }
+      }
     }
   });
   async function loadMovieData() {
@@ -72,6 +128,7 @@ const Home = (props) => {
 
       const result = await rawResponse.json();
       setMovies(result.movies);
+      setRelMovies(result.movies.filter((item) => item.status === 'RELEASED'));
 
     } catch (e) {
       console.log(`Error: ${e.message}`);
@@ -92,7 +149,6 @@ const Home = (props) => {
       let mGenres = [];
       result.genres.forEach((item) => mGenres.push(item.genre));
       setGenres([...new Set(mGenres)]);
-      console.log(result.genres);
 
     } catch (e) {
       console.log(`Error: ${e.message}`);
@@ -120,10 +176,7 @@ const Home = (props) => {
   }
   useEffect(() => {
     loadMovieData();
-  }, [])
-  useEffect(() => {
-    setRelMovies(movies.filter((item) => item.status === 'RELEASED'));
-  }, [movies])
+  },[])
   useEffect(() => {
     loadGenreData();
   }, [])
@@ -131,8 +184,7 @@ const Home = (props) => {
     loadArtistData();
   }, [])
 
-
-
+const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
   return (
     <Fragment>
       <div>
@@ -176,7 +228,7 @@ const Home = (props) => {
               <CardContent className={cardtheme.components.MuiCardContent.styleOverrides.root}>
                 <FormControl variant="standard">
                   <InputLabel htmlFor="component-simple">Movie Name</InputLabel>
-                  <Input id="component-simple" />
+                  <Input id="component-simple" name="fMovie" value={fMovie} onChange={inputFilterChangedHandler} />
                 </FormControl>
 
                 <Autocomplete
@@ -185,6 +237,15 @@ const Home = (props) => {
                   id="checkboxes-tags-demo"
                   options={Genres}
                   disableCloseOnSelect
+                  value={fGenres}
+                  onChange={(e, val) => {
+                    if (val !== null) {
+                      const state = filterForm;
+                      state['fGenres'] = val;
+                      setfilterForm({ ...state });
+                    
+                    }
+                  }}
                   getOptionLabel={(option) => option}
                   renderOption={(props, option, { selected }) => (
                     <li {...props} style={{ marginRight: 0 }}>
@@ -208,6 +269,15 @@ const Home = (props) => {
                   id="checkboxes-tags-demo"
                   options={Artists}
                   disableCloseOnSelect
+                  value={fArtists}
+                  onChange={(e, val) => {
+                    if (val !== null) {
+                      const state = filterForm;
+                      state['fArtists'] = val;
+                      setfilterForm({ ...state });
+                    
+                    }
+                  }}
                   getOptionLabel={(option) => option}
                   renderOption={(props, option, { selected }) => (
                     <li {...props} style={{ marginRight: 0 }}>
@@ -222,20 +292,20 @@ const Home = (props) => {
                   )}
                   style={{ width: 180 }}
                   renderInput={(params) => (
-                    <TextField {...params} variant='standard' label="Artists" />
+                    <TextField {...params} variant='standard' label="Artists"  />
                   )}
                 />
 
                 <FormControl variant="standard">
                   <InputLabel htmlFor="component-simple" shrink>Release Date Start</InputLabel>
-                  <TextField id="component-simple" variant='standard' type="date" sx={{width:180,paddingTop:2}} />
+                  <TextField id="component-simple" variant='standard' type="date" sx={{width:180,paddingTop:2}} name="ReleaseS" value={ReleaseS} onChange={inputFilterChangedHandler} />
                 </FormControl>
                 <FormControl variant="standard">
                   <InputLabel htmlFor="component-simple" shrink>Release Date End</InputLabel>
-                  <TextField id="component-simple" variant='standard' type="date" sx={{width:180,paddingTop:2}} />
+                  <TextField id="component-simple" variant='standard' type="date" sx={{width:180,paddingTop:2}} name="ReleaseE" value={ReleaseE} onChange={inputFilterChangedHandler}/>
                 </FormControl>
                 <div>
-                  <Button fullWidth className={cardtheme.components.MuiButton.styleOverrides.root} type='submit' color='primary' variant="contained">APPLY</Button>
+                  <Button fullWidth className={cardtheme.components.MuiButton.styleOverrides.root} type='submit' variant="contained" onClick={relMovieHandler}>APPLY</Button>
                 </div>
 
               </CardContent>

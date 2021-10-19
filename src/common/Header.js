@@ -199,14 +199,14 @@ const Header = (props) => {
                                 <TextValidator name="Email" variant="standard" id="user" label='Username*' onChange={inputLogInChangedHandler} type="text" value={Email} validators={['required']} errorMessages={['required']}></TextValidator>
                                 {/* <TextField label='Password' placeholder='Enter password' type='password' required /> */}
                                 <TextValidator name="Password" variant="standard" id="pw" label='Password*' onChange={inputLogInChangedHandler} type="password" value={Password} validators={['required']} errorMessages={['required']}></TextValidator>
-                                <br></br>
-                                <div className="LogInSuccess" style={{ display: 'none' }}><br></br><span>{LogInMsg}</span></div>
-                                <Button style={{ width: '25px' }} type='submit' color='primary' variant="contained">LOGIN</Button>
+                                 
+                                <div className="LogInSuccess" style={{ display: 'none',marginTop:'5px' }}><span>{LogInMsg}</span></div>
+                                <Button style={{ marginLeft:'45px',width: '25px',marginTop:'8px' }} type='submit' color='primary' variant="contained">LOGIN</Button>
                             </ValidatorForm>
                         </div>
 
 
-                        <div className="signup" style={{ display: 'none', justifyContent: 'center', marginBottom: '10px' }}>
+                        <div className="signup" style={{ textAlign:'center',display: 'none',  marginBottom: '10px' }}>
                             <ValidatorForm className="subscriber-form" onSubmit={onRegSubmitHandler}>
                                 {/* <TextField name="first_name" label='First Name' onChange={inputChangedHandler} required /> */}
                                 <TextValidator name="first_name" variant="standard" id="fname" label='First Name*' onChange={inputRegChangedHandler} type="text" value={first_name} validators={['required']} errorMessages={['required']}></TextValidator>
@@ -218,9 +218,8 @@ const Header = (props) => {
                                 <TextValidator name="password" variant="standard" id="pasw" label='Password*' onChange={inputRegChangedHandler} type="password" value={password} validators={['required']} errorMessages={['required']}></TextValidator>
                                 {/* <TextField name="mobile_number" label='Contact No' onChange={inputChangedHandler} required /> */}
                                 <TextValidator name="mobile_number" variant="standard" id="mob" label='Contact No*' onChange={inputRegChangedHandler} type="number" value={mobile_number} validators={['required']} errorMessages={['required']}></TextValidator>
-                                <br></br>
-                                <div className="RegitrationSuccess" style={{ display: 'none' }}><br></br><span>{RegMsg}</span></div>
-                                <Button style={{ marginLeft: '35px' }} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
+                                <div className="RegitrationSuccess" style={{ display: 'none',margin:'5px 5px 5px 5px' }}><span>{RegMsg}</span></div>
+                                <Button style={{ marginTop:'5px'}} size="medium" type='submit' color='primary' variant="contained" >REGISTER</Button>
                             </ValidatorForm>
                         </div>
                         </Card>
