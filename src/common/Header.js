@@ -171,7 +171,7 @@ const Header = (props) => {
     async function logout() {
         const param = window.sessionStorage.getItem('access-token');
         try {
-            const rawResponse = await fetch('http://localhost:8085/api/v1/auth/logout', {
+            const rawResponse = await fetch(props.baseUrl+'auth/logout', {
                 method: 'POST',
                 headers: {
                     "Accept": "application/json",

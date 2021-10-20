@@ -7,20 +7,21 @@
 }
 .app-logo{
     width: 5%;
+    text-align: left;
 }
 .empty{
-    width: 75%;
+    width: 80%;
 }
 .bookshow{
-    width: 6%;
+    width: 10%;
 
 }
 .blogin{
-    width: 3%;
+    width: 5%;
 
 }
 .blogout{
-    width: 3%;
+    width: 5%;
   
     
 }
