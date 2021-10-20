@@ -1,14 +1,36 @@
 .header{
     background-color: #222;
-    padding: 8px 32px 8px 16px;
-    height: 34px;
+    padding: 8px 8px 8px 16px;
+    height: 38px;
+    display: flex;
+    justify-content: space-around
+}
+.app-logo{
+    width: 5%;
+}
+.empty{
+    width: 75%;
+}
+.bookshow{
+    width: 6%;
+
+}
+.blogin{
+    width: 3%;
+
+}
+.blogout{
+    width: 3%;
+  
+    
 }
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% {  transform: rotate(359deg); }
 }
 .logo{
-    padding: 5px;
+    padding: 3px;
+    width: 28px;
     background-color: #ff7f7f;
     animation: spin 8s linear infinite;
 }

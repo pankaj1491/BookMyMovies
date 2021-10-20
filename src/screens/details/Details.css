@@ -1,0 +1,28 @@
+.back{
+    margin-left: 24px;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    height: 24px;
+
+}
+.flex-containerDetails{
+    display: flex;
+    margin: 0px 10px 0px 24px;
+
+}
+.leftDetails{
+    width: 20%;
+}
+.middleDetails{
+    width: 60%;
+}
+.rightDetails{
+    width: 20%;
+}
+.marginTop16{
+    width: 850px;
+    margin-top: 16px;
+}
+.trailerContainer{
+    margin-top: 16px;
+}

@@ -4,6 +4,7 @@ import { GridList, GridListTile, GridListTileBar } from '@material-ui/core/';
 import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles/';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { Link } from 'react-router-dom';
 import Header from "../../common/Header";
 import '../home/Home.css';
 
@@ -32,7 +33,7 @@ function isEmpty(value){
   return (value == null || value.length === 0);
 }
 function filterMovies(movie,genres,artists,releases,releasee) {
-  console.log(artists);
+
   if( !isEmpty(movie) && isEmpty(genres) && isEmpty(artists) ){
     
   setRelMovies(movies.filter((item)=> (item.title === movie )));
@@ -47,18 +48,16 @@ function filterMovies(movie,genres,artists,releases,releasee) {
     movies.forEach((item,i) => {if(item.title === movie ){
            index=i;
     }})
-    // console.log(fname,index,movies[index]);
+
     if(index !== 0){
       movies[index].artists.forEach((item)=> sName.push(item.first_name));
     }
     
     sName.forEach((item) =>{if( fname.includes(item)){flag='YES'}});
-    console.log(fname,index,movies[index],sName,flag);
     if(flag === 'YES' && index !== 0){
       let newArr = [];
       newArr.push(movies[index]);
      setRelMovies(newArr);
-     console.log(Relmovies);
     }else{
       setRelMovies(movies.filter((item) => item.status === 'RELEASED'));
     }
@@ -118,7 +117,7 @@ const relMovieHandler = () => {
   async function loadMovieData() {
 
     try {
-      const rawResponse = await fetch('http://localhost:8085/api/v1/movies?page=1&limit=10', {
+      const rawResponse = await fetch(props.baseUrl+'movies?page=1&limit=10', {
         method: 'GET',
         headers: {
           "Accept": "application/json",
@@ -137,7 +136,7 @@ const relMovieHandler = () => {
   async function loadGenreData() {
 
     try {
-      const rawResponse = await fetch('http://localhost:8085/api/v1/genres', {
+      const rawResponse = await fetch(props.baseUrl+'genres', {
         method: 'GET',
         headers: {
           "Accept": "application/json",
@@ -157,7 +156,7 @@ const relMovieHandler = () => {
   async function loadArtistData() {
 
     try {
-      const rawResponse = await fetch('http://localhost:8085/api/v1/artists?page=1&limit=10', {
+      const rawResponse = await fetch(props.baseUrl+'artists?page=1&limit=10', {
         method: 'GET',
         headers: {
           "Accept": "application/json",
@@ -183,12 +182,11 @@ const relMovieHandler = () => {
   useEffect(() => {
     loadArtistData();
   }, [])
-
 const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
   return (
     <Fragment>
       <div>
-        <Header></Header>
+        <Header baseUrl={props.baseUrl} showButton="false"></Header>
       </div>
       <div className="upcomingMoviesHeader">Upcoming Movies</div>
       <div className="upcomingMovies">
@@ -204,13 +202,16 @@ const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
       </div>
       <div className="releasedMoviesnfilter">
         <div className="releasedMovies">
-          <GridList cellHeight={350} cols={4} >
+          <GridList cellHeight={350} cols={4} style={{width:'80%'}} >
             {Relmovies.map((Movie) => (
-              <GridListTile key={Movie.id} >
+              <GridListTile key={Movie.id}  > 
+                <Link to={`/movie/${Movie.id}`}>
                 <img style={{ cursor: 'pointer' }} src={Movie.poster_url} alt={Movie.title} />
                 <GridListTileBar title={Movie.title}
-                  subtitle={`Release Date:Fri ${Movie.release_date}`} />
+                  subtitle={`Release Date:Fri ${new Date(Movie.release_date).toDateString()}`} />
+                  </Link>
               </GridListTile>
+          
             )
 
             )}
@@ -225,7 +226,7 @@ const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
                 titleTypographyProps={{ variant: 'h6' }}
                 title="FIND MOVIES BY:" />
 
-              <CardContent className={cardtheme.components.MuiCardContent.styleOverrides.root}>
+              <CardContent style={{marginTop:'0px',paddingTop:'0px'}}>
                 <FormControl variant="standard">
                   <InputLabel htmlFor="component-simple">Movie Name</InputLabel>
                   <Input id="component-simple" name="fMovie" value={fMovie} onChange={inputFilterChangedHandler} />
@@ -250,6 +251,7 @@ const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
                   renderOption={(props, option, { selected }) => (
                     <li {...props} style={{ marginRight: 0 }}>
                       <Checkbox
+                        id={`id-${option}`}
                         icon={icon}
                         checkedIcon={checkedIcon}
                         style={{ marginLeft: 0 }}
@@ -282,6 +284,7 @@ const {fMovie,fGenres,fArtists,ReleaseS,ReleaseE} = filterForm;
                   renderOption={(props, option, { selected }) => (
                     <li {...props} style={{ marginRight: 0 }}>
                       <Checkbox
+                        id={`id-${option}`}
                         icon={icon}
                         checkedIcon={checkedIcon}
                         style={{ marginLeft: 0 }}
